@@ -48,14 +48,23 @@ class InsertHeadersAndFooters {
 		$this->plugin->db_welcome_dismissed_key = $this->plugin->name . '_welcome_dismissed_key';
 		$this->body_open_supported              = function_exists( 'wp_body_open' ) && version_compare( get_bloginfo( 'version' ), '5.2', '>=' );
 
-        // NRCan Adobe Analytics header and footer scripts
-        $this->staging = 'stage.geo.ca';
-        // $this->staging = 'wordpress.dev.geo.ca'; //testing
-        $this->prod    = 'geo.ca';
+//        // NRCan Adobe Analytics header and footer scripts
+//        $staging_domain = 'dev.geo.ca'; // dev for now
+//        //$staging_domain = 'wordpress.dev.geo.ca'; //testing
+//        $production_domain    = 'geo.ca';
+//        $this->site_domain = parse_url(get_site_url(),PHP_URL_HOST);
+//
+//        $this->staging = true;
+//        $this->production = false;
+//        if ($this->site_domain == $staging_domain ) {
+//           // $this->staging = true;
+//        } elseif ($this->site_domain == $production_domain ) {
+//           // $this->production = true;
+//        }
 
-        $this->aa_header_staging = '<script src="//assets.adobedtm.com/be5dfd287373/0127575cd23a/launch-913b1beddf7a-staging.min.js"></script>';
+        // replace placeholders with these values when pushing to staging or prod
+        $this->aa_header_staging = '<script src="//assets.adobedtm.com/be5dfd287373/0127575cd23a/launch-913b1beddf7a-staging.min.js"></script>' .
         $this->aa_header_prod = '<script src="//assets.adobedtm.com/be5dfd287373/0127575cd23a/launch-f7c3e6060667.min.js"></script>';
-
         $this->aa_footer_staging = '<script type="text/javascript">_satellite.pageBottom();</script>';
         $this->aa_footer_prod = '<script type="text/javascript">_satellite.pageBottom();</script>';
 
@@ -65,8 +74,8 @@ class InsertHeadersAndFooters {
         $this->aa_meta_creator_english = '<meta name="dcterms.creator" content="Natural Resources Canada"/> ';
         $this->aa_meta_creator_french = '<meta name="dcterms.creator" content="Ressources naturelles Canada"/> ';
         $this->aa_meta_service = '<meta name="dcterms.service" content=" NRCan-RNCan"/>  ';
-        $this->aa_meta_access_rights_public = '<meta name="dcterms.accessRights” content="2"/>   ';  // public
-        $this->aa_meta_access_rights_secured = '<meta name="dcterms.accessRights” content="1"/>   ';  // secured (logged on required)
+        $this->aa_meta_access_rights_public = '<meta name="dcterms.accessRights" content="2"/>   ';  // public
+        $this->aa_meta_access_rights_secured = '<meta name="dcterms.accessRights" content="1"/>   ';  // secured (logged on required)
 
 
         // Hooks
@@ -299,21 +308,18 @@ class InsertHeadersAndFooters {
 	}
 
     /**
-     * output NRCan Adobe Analytics header scripts for Staging and Prod only
+     * output NRCan Adobe Analytics header script placeholder for Staging and Prod
+     * replace placeholder with external javascript file when pushing to staging or prod
      * output <Meta> tags by screen language
      *
      */
     function adobe_analytics_header() {
 
-        If ($_SERVER['HTTP_HOST'] == $this->staging) {
-            echo '<!-- Adobe Analytics-->' . PHP_EOL . $this->aa_header_staging . PHP_EOL;
-        }
-        elseif ($_SERVER['HTTP_HOST'] == $this->prod) {
-            echo '<!--Adobe Analytics -->' . PHP_EOL . $this->aa_header_prod . PHP_EOL;
-        }
-        else {
-            return;
-        }
+        echo '<!-- Adobe Analytics-->' . PHP_EOL;
+
+        // for static site staging or prod, replace this comment with external js file links
+        //  see $this->aa_header_staging and $this->aa_header_prod for links
+        echo '<!-- AA-head-js -->'   . PHP_EOL;
 
         //Adobe Analytics Meta tags
 
@@ -328,7 +334,9 @@ class InsertHeadersAndFooters {
         if (is_404()) {
             echo $this->aa_meta_title . '"' . '404 Not Found: ' . $_SERVER['REQUEST_URI']  .  '" />' . PHP_EOL;
         } else {
-            echo $this->aa_meta_title . '"' . get_the_title() . '" />' . PHP_EOL;
+            $title = get_the_title();
+            $title = str_replace('&#8211;','-',$title); // replace character code like &#8211; with hyphen
+            echo $this->aa_meta_title . '"' . $title . '" />' . PHP_EOL;
         }
 
         if ($lang_en) {
@@ -352,16 +360,10 @@ class InsertHeadersAndFooters {
      */
     function adobe_analytics_footer() {
 
-        If ($_SERVER['HTTP_HOST'] == $this->staging) {
-            echo PHP_EOL . '<!-- Adobe Analytics -->' . PHP_EOL;
-            echo $this->aa_footer_staging;
-            echo PHP_EOL . '<!-- end Adobe Analytics -->' . PHP_EOL;
-        }
-        elseif ($_SERVER['HTTP_HOST'] == $this->prod) {
-            echo PHP_EOL . '<!-- Adobe Analytics -->' . PHP_EOL;
-            echo $this->aa_footer_prod;
-            echo PHP_EOL . '<!-- end Adobe Analytics -->' . PHP_EOL;
-        }
+        echo PHP_EOL . '<!-- Adobe Analytics -->' . PHP_EOL;
+        echo '<!-- AA-footer-js -->'   . PHP_EOL;   // replace with js script for staging or prod
+        echo '<!-- end Adobe Analytics -->' . PHP_EOL;
+
 
         return;
 

@@ -202,7 +202,7 @@ if(!class_exists('Csbwfs_Class'))
 		 */
       public static function csbwfs_add_settings_link( $links ) {
             $settings_link = '<a href="options-general.php?page=csbwfs-settings">' . __( 'Settings', 'csbwfs' ) . '</a>';
-			$settings_link .= ' | <a href="https://www.wp-experts.in/products/share-buttons-with-floating-sidebar-pro-addon" target="_blank">' . __( 'FLAT 10% DISCOUNT! GET ADD-ON', 'csbwfs' ) . '</a>';
+			$settings_link .= ' | <a href="https://www.wp-experts.in/products/share-buttons-with-floating-sidebar-pro-addon" target="_blank">' . __( 'Get Add-on', 'csbwfs' ) . '</a>';
             array_unshift( $links, $settings_link );
             return $links;
         }
